@@ -19,4 +19,7 @@ public class Pedido {
     private String descricao;
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 }
