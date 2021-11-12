@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Cacheable("books")
-    List<Pedido> findByStatus(StatusPedido aguardando, Pageable page);
+    List<Pedido> findByStatus(StatusPedido status, Pageable page);
 
     List<Pedido> findByUser_Username(String username);
 
