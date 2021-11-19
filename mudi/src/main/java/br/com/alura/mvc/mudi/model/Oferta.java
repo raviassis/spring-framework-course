@@ -1,5 +1,6 @@
 package br.com.alura.mvc.mudi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ public class Oferta {
     private BigDecimal valor;
     private LocalDate dataDaEntrega;
     private String comentario;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Pedido pedido;
 }

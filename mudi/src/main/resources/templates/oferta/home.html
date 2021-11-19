@@ -12,17 +12,39 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 col-sm-8 mb-3">
-                        <div class="row">
-                            <div class="col-md-5">Valor: <input type="text"></div>
-                            <div class="col-md-7">Data da entrega: <input type="text"></div>
-                        </div>
-
                         <div>Produto</div>
                         <div><a v-bind:href="pedido.urlProduto">{{pedido.nomeProduto}}</a></div>
                         <div>Descrição</div>
                         <div>
-                    <textarea class="form-control" name="" id="" cols="30" rows="10">{{pedido.descricao}}</textarea>
+                            <textarea disabled class="form-control" name="" id="" cols="30" rows="10">{{pedido.descricao}}</textarea>
                         </div>
+                        <div class="row mt-3">
+                            <div class="col-md-5">
+                                Valor:
+                                <input
+                                    v-bind:class="{'is-invalid': pedido.errors.valor !== ''}"
+                                    v-model="pedido.valorNegociado" >
+                                <div v-if="pedido.errors.valor" class="invalid-feedback">
+                                    {{pedido.errors.valor}}
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                Data da entrega:
+                                <input
+                                    v-bind:class="{'is-invalid': pedido.errors.dataDaEntrega !== ''}"
+                                    v-model="pedido.dataDaEntrega">
+                                <div v-if="pedido.errors.dataDaEntrega" class="invalid-feedback">
+                                    {{pedido.errors.dataDaEntrega}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <label for="comentario"></label>
+                            <textarea name="comentario" v-model="pedido.comentario" class="form-control" cols="30" rows="10"></textarea>
+                        </div>
+                        <div>teste: {{pedido.ofertaEnviada}}</div>
+                        <button v-if="pedido.ofertaEnviada" class="btn btn-success">Oferta enviada</button>
+                        <button v-else v-on:click="enviarOferta(pedido)" class="btn btn-primary">Enviar Oferta</button>
                     </div>
                     <div class="col-12 col-sm-4">
                         <div>
@@ -43,7 +65,38 @@
                 mounted() {
                     axios
                         .get("http://localhost:8080/api/pedidos/aguardando")
-                        .then(res => {this.pedidos = res.data })
+                        .then(res => {
+                            this.pedidos = res.data;
+                            this.pedidos.forEach(p => {
+                                p.ofertaEnviada = false;
+                                p.errors = {
+                                    valor: '',
+                                    dataDaEntrega: ''
+                                }
+                            })
+                        })
+                },
+                methods: {
+                    enviarOferta: function (pedido) {
+                        pedido.errors = {
+                            valor: '',
+                            dataDaEntrega: ''
+                        }
+                        axios
+                            .post('http://localhost:8080/api/ofertas', {
+                                pedidoId: pedido.id,
+                                valor: pedido.valorNegociado,
+                                dataDaEntrega: pedido.dataDaEntrega,
+                                comentario: pedido.comentario
+                            })
+                            .then(() => pedido.ofertaEnviada = true)
+                            .catch(error => {
+                                error.response.data.errors.forEach(error => {
+                                    pedido.errors[error.field] = error.defaultMessage;
+                                })
+                            });
+
+                    }
                 }
             });
         }
