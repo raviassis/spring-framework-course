@@ -1,7 +1,6 @@
 package br.com.alura.forum.controllers.dto;
 
 import br.com.alura.forum.modelo.Topico;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
