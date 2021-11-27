@@ -23,7 +23,7 @@ public class AtualizacaoTopicoForm {
     private String mensagem;
 
     public Topico atualizar(Long id, TopicoRepository topicoRepository) {
-        var topico = topicoRepository.getById(id);
+        Topico topico = topicoRepository.getById(id);
         topico.setTitulo(this.titulo);
         topico.setMensagem(this.mensagem);
         return topico;
