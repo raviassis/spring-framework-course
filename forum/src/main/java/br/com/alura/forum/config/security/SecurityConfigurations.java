@@ -12,12 +12,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     @Autowired
     private AutenticacaoService autenticacaoService;
+
+    @Autowired
+    private AutenticacaoViaTokenFilter autenticacaoViaTokenFilter;
 
     @Override
     @Bean
@@ -40,7 +44,8 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.POST, "/auth").permitAll()
             .anyRequest().authenticated()
             .and().csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and().addFilterBefore(autenticacaoViaTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     //Configurações de recursos estáticos(js, css, images, etc)
